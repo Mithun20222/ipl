@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Match Predictor</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --error: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            grid-column: 1 / -1;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid var(--success);
+            display: none;
+        }
+        
+        .results h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .error {
+            padding: 15px;
+            background: #fee;
+            color: var(--error);
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 5px solid var(--error);
+        }
+        
+        .form-group p {
+            font-size: 0.8rem;
+            color: red;
+        }
+        
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cricket Match Predictor</h1>
+            <p>Predict toss and match winners with ML</p>
+        </header>
+        
+        <div class="form-container">
+            <form method="POST" onsubmit="return validateForm()">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="team1">Team 1 (Home Team)</label>
+                        <input type="text" id="team1" name="team1" required placeholder="E.g. Mumbai Indians">
+                        <p>Team 1 must be the home team (matches the venue city)</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="team2">Team 2</label>
+                        <input type="text" id="team2" name="team2" required placeholder="E.g. Chennai Super Kings">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="venue">Venue</label>
+                        <input type="text" id="venue" name="venue" required placeholder="E.g. Wankhede Stadium">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="season">Season</label>
+                        <input type="text" id="season" name="season" required placeholder="E.g. 2023">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="match_type">Match Type</label>
+                        <select id="match_type" name="match_type" required>
+                            <option value="">Select match type</option>
+                            <option value="IPL">League</option>
+                            <option value="T20">T20 International</option>
+                            <option value="ODI">ODI</option>
+                            <option value="Test">Test Match</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" required placeholder="E.g. Mumbai">
+                    </div>
+                </div>
+                
+                <button type="submit">Predict Outcome</button>
+            </form>
+            
+            {% if error %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endif %}
+            
+            {% if toss_winner %}
+                <div class="results" style="display: block;">
+                    <h2>Prediction Results</h2>
+                    <div class="result-item">
+                        <span class="result-label">Toss Winner:</span>
+                        <span class="result-value">{{ toss_winner }}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Match Winner:</span>
+                        <span class="result-value">{{ match_winner }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
